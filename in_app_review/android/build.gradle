@@ -22,7 +22,11 @@ allprojects {
 }
 
 apply plugin: "com.android.library"
-apply plugin: "kotlin-android"
+// AGP 9 compiles Kotlin itself and rejects an explicit KGP apply; AGP 8 still
+// needs it. See https://developer.android.com/r/tools/built-in-kotlin.
+if (com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0] as int < 9) {
+    apply plugin: "kotlin-android"
+}
 
 android {
     namespace = "dev.britannio.in_app_review"
