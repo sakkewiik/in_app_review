@@ -24,7 +24,8 @@ allprojects {
 apply plugin: "com.android.library"
 // AGP 9 compiles Kotlin itself and rejects an explicit KGP apply; AGP 8 still
 // needs it. See https://developer.android.com/r/tools/built-in-kotlin.
-if (com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0] as int < 9) {
+def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0] as int
+if (agpMajor < 9) {
     apply plugin: "kotlin-android"
 }
 
@@ -38,8 +39,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
+    // kotlinOptions comes from the Kotlin Gradle Plugin, which is only applied
+    // below AGP 9. Built-in Kotlin takes its JVM target from compileOptions.
+    if (agpMajor < 9) {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_11
+        }
     }
 
     sourceSets {
